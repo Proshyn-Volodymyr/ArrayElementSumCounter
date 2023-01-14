@@ -2,31 +2,30 @@ package com.gmail.vladimirprocean;
 
 public class Main {
     public static void main(String[] args) {
-        int[] arr = new int[200000];
-        for (int i = 0; i < arr.length; i++) {
-            arr[i] = (int)(Math.random()*100);
-        }
-        ArrayElementSumCounter aesc = new ArrayElementSumCounter(arr);
-        Thread thread;
+        int[] arr = new int[20];
         int arrPart = (arr.length / 4);
-        if (arr.length % 2 != 0) {
-            arrPart += 1;
+        int index = 0;
+        int sumOfElements = 0;
+
+        for (int i = 0; i < arr.length; i++) {
+            arr[i] = (int) (Math.random() * 10);
         }
-        int[] newArr = new int[arrPart];
+
+        Thread[] threads = new Thread[4];
+        ArrayElementSumCounter[] counters = new ArrayElementSumCounter[4];
+
         for (int i = 0; i < arr.length; i += arrPart) {
-            System.arraycopy(arr, i, newArr, 0, arrPart);
-            thread = new Thread(new ArrayElementSumCounter(newArr));
-            thread.start();
-            try {
-                thread.join();
-            } catch (InterruptedException e) {
+            counters[index] = new ArrayElementSumCounter(i, i + arrPart, arr);
+            threads[index] = new Thread(counters[index]);
+            threads[index].start();
+            try{
+                threads[index].join();
+            }catch (InterruptedException e){
                 e.printStackTrace();
             }
-
+            sumOfElements += counters[index].getTotal();
+            index++;
         }
-//        for (int elem:newArr
-//        ) {
-//            System.out.println(elem);
-//        }
+        System.out.println(sumOfElements);
     }
 }
